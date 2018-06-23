@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour {
     private float movePosX = 0f;
 
     //動きを減速させる係数(強制停止)
-    private float coefficient = 2.0f;
+    private float coefficient = 4.0f;
 
     //ゲーム終了の判定
     private bool isEnd = false;
@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour {
     private bool isDriftLeftway = false;    // ドリフト状態(左に流れている)
     private bool isDriftRightway = false;   // ドリフト状態(右に流れている)
     private bool isSpin = false;            // スピン状態
-    private float driftForce = 5f;         // ドリフト時にかかる力
+    private float driftForce = 10.0f;       // ドリフト時にかかる力
 
     // 距離の表示
     private GameObject distance;

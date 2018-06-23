@@ -13,7 +13,7 @@ public class EnemyGenerator : MonoBehaviour {
     private int goalPos = 2000;
 
     // 敵車(enemy)が生成されるx方向の範囲
-    private float posRange = 3.4f;
+    private float posXRange = 3.4f;
 
     // 敵車(enemy)が生成されるz方向の場所
     private float enemyPos;
@@ -38,7 +38,7 @@ public class EnemyGenerator : MonoBehaviour {
                 EnemyCreation(enemyPos);
 
                 // 次のItemの生成場所を決定(Playerの前方100mに150m毎生成)
-                enemyPos += 50;
+                enemyPos += 150;
             }
         }
     }
@@ -51,10 +51,6 @@ public class EnemyGenerator : MonoBehaviour {
 
         // 敵車(enemy)を生成
         GameObject car = Instantiate(enemyPrefab) as GameObject;
-        car.transform.position = new Vector3(posRange * offsetX, car.transform.position.y, PosZ);
-
-        // 敵車(enemy)の速度を決定する。
-        float speed = player.GetComponent<Rigidbody>().velocity.magnitude;
-        car.GetComponent<Rigidbody>().velocity = new Vector3(0, 0, speed + 50);
+        car.transform.position = new Vector3(posXRange * offsetX, car.transform.position.y, PosZ);
     }
 }
