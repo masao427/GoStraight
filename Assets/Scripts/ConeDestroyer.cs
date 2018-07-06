@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ConeDestroyer : MonoBehaviour {
-    // Playerオブジェクト取得
-    private GameObject player;
+    // 各種オブジェクト
+    private GameObject player;  // Playerオブジェクト取得
 
-    // Playerの通過ポイント
-    private int delPosZ = 20;
+    // 各種属性
+    private int delPosZ = 20;   // Playerの通過ポイント
+    private int scoreNum = 0;   // スコア計算
 
     // Use this for initialization
     void Start() {

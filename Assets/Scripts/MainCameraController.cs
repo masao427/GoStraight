@@ -3,17 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MainCameraController : MonoBehaviour {
-    // Playerのオブジェクト
-    private GameObject player;
+    // 各種オブジェクト
+    private GameObject player;  // Playerのオブジェクト
+    private GameObject goal;    // Goalのオブジェクト
 
-    // Goalのオブジェクト
-    private GameObject goal;
-
-    // Goal地点
-    private float goalPos;
-
-    // Playerとカメラの距離
-    private float difference;
+    // 各種属性
+    private float goalPos;      // Goal地点
+    private float difference;   // Playerとカメラの距離
 
     // Use this for initialization
     void Start() {

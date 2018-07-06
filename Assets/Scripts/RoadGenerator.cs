@@ -3,18 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class RoadGenerator : MonoBehaviour {
-    // Playerのオブジェクト
-    private GameObject player;
+    // 各種オブジェクト
+    private GameObject player;      // Playerのオブジェクト
+    public GameObject RoadPrefab;   // 新しい RoadPrefab を入れる
 
-    // 新しい RoadPrefab を入れる
-    public GameObject RoadPrefab;
-
-    // 道路オブジェクトの中心のZ軸ポジション
-    private float centerPosZ = 0;
+    // 各種属性
+    private float centerPosZ = 0;   // 道路オブジェクトの中心のZ軸ポジション
     private float nextPosZ = 504;
-
-    // 道路オブジェクトの生成回数
-    private int i = 0;
+    private int i = 0;              // 道路オブジェクトの生成回数
     private int roadCreateNum = 50;
 
     // Use this for initialization

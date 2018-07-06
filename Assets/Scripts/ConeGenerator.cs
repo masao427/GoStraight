@@ -36,7 +36,7 @@ public class ConeGenerator : MonoBehaviour {
                 // 障害物(cone)を生成
                 coneCreation(conePos);
 
-                // 次のItemの生成場所を決定(Playerの前方100mに20m毎生成)
+                // 次のItemの生成場所を決定(Playerの前方100mに15m毎生成)
                 conePos += 15;
             }
         }

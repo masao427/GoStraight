@@ -12,6 +12,7 @@ TagManager:
   - EdgeRoadTag
   - LeftSideFenceTag
   - RightSideFenceTag
+  - ConeTag
   layers:
   - Default
   - TransparentFX

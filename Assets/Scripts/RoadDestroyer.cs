@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class RoadDestroyer : MonoBehaviour {
-    // Playerオブジェクト取得
-    private GameObject player;
+    // 各種オブジェクト
+    private GameObject player;  // Playerオブジェクト取得
 
-    // Playerの通過ポイント
-    private int delPosZ = 260;
-
-    // Goal地点
-    private float goalPos;
+    // 各種属性
+    private int delPosZ = 260;  // Playerの通過ポイント
+    private float goalPos;      // Goal地点
 
     // Use this for initialization
     void Start() {

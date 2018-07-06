@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class EnemyGenerator : MonoBehaviour {
     // 各種オブジェクト
-    private GameObject player;  // Playerのオブジェクト
-    private GameObject goal;    // Goalのオブジェクト
+    private GameObject player;      // Playerのオブジェクト
+    private GameObject goal;        // Goalのオブジェクト
 
-    public GameObject enemy1;   // 敵車(enemy)のPrefabを入れる
+    public GameObject enemy1;       // 敵車(enemy)のPrefabを入れる
     public GameObject enemy2;
     public GameObject enemy3;
     public GameObject enemy4;
 
     // 各種属性
-    private float goalPos;              // Goal地点
-    private float posXRange = 1.84f;    // 敵車(enemy)が生成されるx方向の範囲
-    private float enemyPos;             // 敵車(enemy)が生成されるz方向の場所
+    private float goalPos;          // Goal地点
+    private float posXRange = 1.84f;// 敵車(enemy)が生成されるx方向の範囲
+    private float enemyPos;         // 敵車(enemy)が生成されるz方向の場所
 
     // Use this for initialization
     void Start() {
@@ -88,7 +88,7 @@ public class EnemyGenerator : MonoBehaviour {
         }
 
         // アイテムを置くX座標のオフセットをランダムに設定
-//        int offsetX = Random.Range(-2, 2);
+ //       int offsetX = Random.Range(-2, 2);
         int offsetX = -2;
         car.transform.position = new Vector3(posXRange * offsetX, car.transform.position.y, PosZ);
     }

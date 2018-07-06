@@ -5,19 +5,20 @@ using UnityEngine.UI;
 
 public class SpeedMeterController : MonoBehaviour {
     // 各種オブジェクト
-    private GameObject player;      // Playerのオブジェクト
-    private GameObject speed;       // デジタルスピードメータのオブジェクト
-    private Image spdMeter;         // アナログスピードメータのオブジェクト
+    private GameObject player;          // Playerのオブジェクト
+    private GameObject speed;           // デジタルスピードメータのオブジェクト
+    private Image spdMeter;             // アナログスピードメータのオブジェクト
 
     // 各種属性
-    private float maxSpeed = 300.0f;// 最高速設定
-    private float spdnum = 0.0f;    // スピードの表示
+    private float playerOffset = 240;   // Playerの初期位置のオフセット
+    private float maxSpeed = 300.0f;    // 最高速設定
+    private float spdnum = 0.0f;        // スピードの表示
 
     // Use this for initialization
     void Start() {
         // Playerのオブジェクトを取得
         player = GameObject.Find("Player");
-        Debug.Log("Player Position: " + (player.transform.position.z + 240));
+        Debug.Log("Player Position: " + (player.transform.position.z + playerOffset));
 
         // デジタルスピードメータのオブジェクト
         speed = GameObject.Find("SpeedValue");
