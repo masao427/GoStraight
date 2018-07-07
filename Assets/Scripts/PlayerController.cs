@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour {
     private bool isDriftRightway = false;   // ドリフト状態(右に流れている)
     private bool isSpin = false;            // スピン状態
     private bool isStop = false;            // 停止状態
-    private bool isGameOver = false;        // ゲームオーバ状態
+    private bool isGameOver = false;        // ゲームオーバー状態
     private float driftForce = 6.0f;        // ドリフト時にX軸にかかる力(どのくらいの速度で滑るか)
     private int dftTimeOut = 25;            // ドリフトしている時間
     private int dftCount = 0;               // ドリフト中の時間カウント
@@ -101,14 +101,6 @@ public class PlayerController : MonoBehaviour {
 
         // PlayerのY軸
         defaultPosY = transform.position.y;
-
-        //現在読み込まれているシーン数だけループ
-        for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
-        {
-            //読み込まれているシーンを取得し、その名前をログに表示
-            string sceneName = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i).name;
-            Debug.Log(sceneName);
-        }
     }
 
     // Update is called once per frame
@@ -130,7 +122,7 @@ public class PlayerController : MonoBehaviour {
                 movePosZ = 0;
             }
 
-            // ゲームオーバ状態
+            // ゲームオーバー状態
             isGameOver = true;
         }
 
@@ -156,18 +148,18 @@ public class PlayerController : MonoBehaviour {
                 Debug.Log("[Player]Miss " + missNum);
             }
 
-            // 残機が無くなったらゲームオーバ状態
+            // 残機が無くなったらゲームオーバー状態
             if (missNum == 0)
             {
-                // 画面にゲームオーバと表示
+                // 画面にゲームオーバーと表示
                 messageDisplay.GetComponent<Text>().text = "Game Over";
 
-                // ゲームオーバ状態
+                // ゲームオーバー状態
                 isGameOver = true;
             }
         }
 
-        // ゲームオーバになった
+        // ゲームオーバーになった
         if (isGameOver == true)
         {
             // キー入力は無効

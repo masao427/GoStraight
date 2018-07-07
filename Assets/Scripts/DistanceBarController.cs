@@ -36,11 +36,20 @@ public class DistanceBarController : MonoBehaviour {
 	// Update is called once per frame
 	void Update()
     {
-        // 距離を計測
-        distnum = player.transform.position.z + playerOffset;
-        distance.GetComponent<Text>().text = distnum.ToString("f0").PadLeft(6, '0') + "m";
+        if (player.transform.position.z < goalPos)
+        {
+            // 距離を計測
+            distnum = player.transform.position.z + playerOffset;
+            distance.GetComponent<Text>().text = distnum.ToString("f0").PadLeft(6, '0') + "m";
 
-        // ゴールまでの位置をプログレスバーに表示
-        progressBar.value = (player.transform.position.z + playerOffset) /(goalPos + playerOffset);
+            // ゴールまでの位置をプログレスバーに表示
+            progressBar.value = (player.transform.position.z + playerOffset) / (goalPos + playerOffset);
+        }
+        else
+        {
+            // 
+            distnum = goalPos + playerOffset;
+            distance.GetComponent<Text>().text = distnum.ToString("f0").PadLeft(6, '0') + "m";
+        }
 	}
 }
