@@ -9,6 +9,7 @@ public class DistanceBarController : MonoBehaviour {
     private GameObject distance;        // 距離プログレスバーのオブジェクト
     private GameObject goal;            // Goalのオブジェクト
     private Slider progressBar;         // プログレスバーのオブジェクト
+    private Text disttxt;               // 距離表示表示
 
     // 各種属性
     private float distnum;              // 距離の表示
@@ -23,6 +24,7 @@ public class DistanceBarController : MonoBehaviour {
 
         // 距離表示のオブジェクト
         distance = GameObject.Find("DistValue");
+        disttxt = distance.GetComponent<Text>();
 
         // Goalオブジェクトの取得
         goal = GameObject.Find("GoalPrefab");
@@ -40,16 +42,16 @@ public class DistanceBarController : MonoBehaviour {
         {
             // 距離を計測
             distnum = player.transform.position.z + playerOffset;
-            distance.GetComponent<Text>().text = distnum.ToString("f0").PadLeft(6, '0') + "m";
+            disttxt.text = distnum.ToString("f0").PadLeft(6, '0') + "m";
 
             // ゴールまでの位置をプログレスバーに表示
             progressBar.value = (player.transform.position.z + playerOffset) / (goalPos + playerOffset);
         }
         else
         {
-            // 
+            // ゴール後、距離表示を停止する。
             distnum = goalPos + playerOffset;
-            distance.GetComponent<Text>().text = distnum.ToString("f0").PadLeft(6, '0') + "m";
+            disttxt.text = distnum.ToString("f0").PadLeft(6, '0') + "m";
         }
 	}
 }

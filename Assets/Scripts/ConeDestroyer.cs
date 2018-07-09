@@ -22,7 +22,6 @@ public class ConeDestroyer : MonoBehaviour {
         if (transform.position.z <= player.transform.position.z - delPosZ)
         {
             Destroy(gameObject);
-            Debug.Log("[Cone]Deleted");
         }
     }
 }

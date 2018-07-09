@@ -31,13 +31,15 @@ public class ConeGenerator : MonoBehaviour {
         // 一定の距離ごとに障害物(cone)を生成
         if (conePos < goalPos)
         {
-            if (conePos <= player.transform.position.z + 100)
+            // Playerの50m先よりも敵車(enemy)生成ポイントが近づいたとき
+            if (conePos <= player.transform.position.z + 50)
             {
                 // 障害物(cone)を生成
                 coneCreation(conePos);
 
-                // 次のItemの生成場所を決定(Playerの前方100mに15m毎生成)
-                conePos += 15;
+                // 次の障害物(cone)の生成ポイントを決定
+                // Playerの前方10m毎に障害物(cone)の生成ポイントを生成
+                conePos += 10;
             }
         }
     }

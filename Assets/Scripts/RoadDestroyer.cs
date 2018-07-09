@@ -28,7 +28,7 @@ public class RoadDestroyer : MonoBehaviour {
             if (this.transform.position.z <= player.transform.position.z - delPosZ)
             {
                 Destroy(this.gameObject);
-                Debug.Log("道路撤去");
+//                Debug.Log("道路撤去");
             }
         }
     }

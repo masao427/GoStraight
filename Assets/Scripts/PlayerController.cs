@@ -58,6 +58,10 @@ public class PlayerController : MonoBehaviour {
     public float playerMaxSpeed;            // 最高速設定(ステージ毎に選択できる)
     private float spdnum = 0.0f;
 
+    // メッセージテキスト
+    private Text msgtxt;
+    private Text scoretxt;
+
     // ステージセレクトボタンの位置
     private float st0PosX;
     private float st1PosX;
@@ -71,7 +75,9 @@ public class PlayerController : MonoBehaviour {
 
         // スコア、メッセージ表示用のオブジェクトを取得
         messageDisplay = GameObject.Find("Message");
+        msgtxt = messageDisplay.GetComponent<Text>();
         scoreDisplay = GameObject.Find("Score");
+        scoretxt = scoreDisplay.GetComponent<Text>();
 
         // ステージセレクトボタン
         Vector3 workPos;
@@ -141,18 +147,16 @@ public class PlayerController : MonoBehaviour {
 
                 // 状態復帰
                 isStop = false;
-                Debug.Log("[Player]Let's ReStart!");
 
                 // ミスの回数をカウント
                 missNum -= 1;
-                Debug.Log("[Player]Miss " + missNum);
             }
 
             // 残機が無くなったらゲームオーバー状態
             if (missNum == 0)
             {
                 // 画面にゲームオーバーと表示
-                messageDisplay.GetComponent<Text>().text = "Game Over";
+                msgtxt.text = "Game Over";
 
                 // ゲームオーバー状態
                 isGameOver = true;
@@ -168,7 +172,6 @@ public class PlayerController : MonoBehaviour {
              || ((Input.GetKey(KeyCode.UpArrow))    || (isAButtonDown)))
             {
                 // 制御できない(何もしない)
-                Debug.Log("[Player]Cannot Control!!!");
             }
 
             // シーン選択ボタンを表示する
@@ -208,14 +211,12 @@ public class PlayerController : MonoBehaviour {
 
                 // スコア加算
                 scoreNum += 100;
-                scoreDisplay.GetComponent<Text>().text = "Score " + scoreNum.ToString("D6");
-                Debug.Log("[Player]Recover!!!");
+                scoretxt.text = "Score " + scoreNum.ToString("D6");
             }
             else if ((Input.GetKey(KeyCode.RightArrow))
                   || (isRButtonDown))
             {
                 // 制御できない(何もしない)
-                Debug.Log("[Player]Cannot Control!!!");
             }
 
             // ドリフトからスピン状態へ遷移
@@ -223,7 +224,6 @@ public class PlayerController : MonoBehaviour {
             {
                 // ドリフト中しばらくは滑る
                 dftCount++;
-                Debug.Log("[Player]Drifting to Left side!!!");
             }
             else
             {
@@ -234,7 +234,6 @@ public class PlayerController : MonoBehaviour {
                 // Y軸で回転できるようにする。
                 myRigidbody.constraints = RigidbodyConstraints.None;
                 myRigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-                Debug.Log("[Player]Spinning!!!");
             }
         }
         else if ((isDriftRightway == true)
@@ -249,7 +248,6 @@ public class PlayerController : MonoBehaviour {
              || (isLButtonDown))
             {
                 // 制御できない(何もしない)
-                Debug.Log("[Player]Cannot Control!!!");
             }
             else if ((Input.GetKey(KeyCode.RightArrow))
                   || (isRButtonDown))
@@ -260,15 +258,13 @@ public class PlayerController : MonoBehaviour {
 
                 // スコア加算
                 scoreNum += 100;
-                scoreDisplay.GetComponent<Text>().text = "Score " + scoreNum.ToString("D6");
-                Debug.Log("[Player]Recover!!!");
+                scoretxt.text = "Score " + scoreNum.ToString("D6");
             }
 
             // ドリフトからスピン状態へ遷移
             if (dftCount < dftTimeOut)
             {
                 dftCount++;
-                Debug.Log("[Player]Drifting to Right side!!!");
             }
             else
             {
@@ -280,7 +276,6 @@ public class PlayerController : MonoBehaviour {
                 // 一旦全軸の制限を解除してからX, Z軸をFreeze
                 myRigidbody.constraints = RigidbodyConstraints.None;
                 myRigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-                Debug.Log("[Player]Spinning!!!");
             }
         }
 
@@ -303,7 +298,6 @@ public class PlayerController : MonoBehaviour {
              || ((Input.GetKey(KeyCode.RightArrow)) || (isRButtonDown)))
             {
                 // 制御できない(何もしない)
-                Debug.Log("[Player]Cannot Control!!!");
             }
 
             // スピン中アクセルオンの場合、Z軸とX軸の減少や緩やか
@@ -318,7 +312,6 @@ public class PlayerController : MonoBehaviour {
 
                 // スピンしているので、アクセルオンしていても緩やかに減速する。
                 movePosZ -= (reduceForce * 0.80f);
-                Debug.Log("[Player]Accsel ON in Spin status");
             }
             // スピン中アクセルオフの場合、Z軸とX軸の減少が早い。
             // つまり、スピンして滑ってはいるがエンジンブレーキがかかってすぐに減速する。
@@ -331,7 +324,6 @@ public class PlayerController : MonoBehaviour {
 
                 // エンジンブレーキがかかる
                 movePosZ -= reduceForce;
-                Debug.Log("[Player]Accsel OFF in Spin status");
             }
 
             // 車速が完全に停止した
@@ -347,14 +339,12 @@ public class PlayerController : MonoBehaviour {
 
                 // スピンを止める。
                 myRigidbody.angularVelocity = Vector3.zero;
-                Debug.Log("[Player]Stopped Spin status");
 
                 // Playerの姿勢を元に戻す。
                 transform.rotation = Quaternion.Euler(0, -180, 0);
 
                 // 全軸のRotationをFreeze
                 myRigidbody.constraints = RigidbodyConstraints.FreezeRotation;
-                Debug.Log("[Player]Recover from Spin status");
             }
         }
 
@@ -375,7 +365,7 @@ public class PlayerController : MonoBehaviour {
              || (isAButtonDown))
             {
                 // Max Speed になるまで加速する。
-                if (spdnum <= playerMaxSpeed)
+                if (spdnum < playerMaxSpeed)
                 {
                     movePosZ += forwardForce;
                 }
@@ -431,8 +421,7 @@ public class PlayerController : MonoBehaviour {
         if (other.gameObject.tag == "GoalTag")
         {
             isEnd = true;
-            messageDisplay.GetComponent<Text>().text = "Goal!";
-            Debug.Log("[Player]Goal");
+            msgtxt.text = "Goal!";
         }
     }
 
@@ -443,7 +432,6 @@ public class PlayerController : MonoBehaviour {
         {
             // 停止状態に遷移
             isStop = true;
-            Debug.Log("[Player]Hit The Fence!");
 
             // 接触した瞬間の位置を記録
             expPosZ = transform.position.z;
@@ -500,18 +488,12 @@ public class PlayerController : MonoBehaviour {
                     // Playerの右側に接触したので車体は左方向にドリフトする。
                     isDriftLeftway = true;  
                     isDriftRightway = false;
-                    
-                    Debug.Log("[Player]Hit to My Right Side!");
-                    Debug.Log("[Player]Start Drifting Left Side!");
                 }
                 else
                 {
                     // Playerの左側に接触したの車体は右方向にドリフトする。
                     isDriftLeftway = false;
-                    isDriftRightway = true; 
-
-                    Debug.Log("[Player]Hit to My Left Side!");
-                    Debug.Log("[Player]Start Drifting Right Side!");
+                    isDriftRightway = true;
                 }
 
                 // ドリフト開始
@@ -523,8 +505,14 @@ public class PlayerController : MonoBehaviour {
         if (collision.gameObject.tag == "ConeTag")
         {
             scoreNum += 10;
-            scoreDisplay.GetComponent<Text>().text = "Score " + scoreNum.ToString("D6");
-            Debug.Log("[Player]Hit a Cone");
+            scoretxt.text = "Score " + scoreNum.ToString("D6");
+
+            // 障害物に当たるたびに速度が上がるバグ修正
+            if (spdnum > playerMaxSpeed)
+            {
+                // 当たった瞬間のみ減速
+                movePosZ -= reduceForce;
+            }
         }
     }
 

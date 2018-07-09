@@ -36,9 +36,9 @@ public class RoadGenerator : MonoBehaviour {
             i++;
 
             // デバッグ情報
-            Debug.Log("道路設営 " + i + " 回");
-            Debug.Log("Center = " + centerPosZ);
-            Debug.Log("Player = " + player.transform.position.z);
+//            Debug.Log("道路設営 " + i + " 回");
+//            Debug.Log("Center = " + centerPosZ);
+//            Debug.Log("Player = " + player.transform.position.z);
         }
     }
 }

@@ -27,7 +27,7 @@ public class EnemyGenerator : MonoBehaviour {
         goalPos = goal.transform.position.z;
 
         // 敵車(enemy)が生成されるのはPlayerの前方100m(初期値)
-        enemyPos = player.transform.position.z + 50;
+        enemyPos = player.transform.position.z + 100;
     }
 	
 	// Update is called once per frame
@@ -35,13 +35,15 @@ public class EnemyGenerator : MonoBehaviour {
         // 一定の距離ごとに敵車(enemy)を生成
         if (enemyPos < goalPos)
         {
-            if (enemyPos <= player.transform.position.z + 50)
+            // Playerの40m先よりも敵車(enemy)生成ポイントが近づいたとき
+            if (enemyPos <= player.transform.position.z + 40)
             {
                 // 敵車(enemy)を生成
                 EnemyCreation(enemyPos);
 
-                // 次のItemの生成場所を決定(Playerの前方30mに50m毎生成)
-                enemyPos += 30;
+                // 次の敵車(enemy)の生成ポイントを決定
+                // Playerの前方60m毎に敵車(enemy)の生成ポイントを生成
+                enemyPos += 60;
             }
         }
     }

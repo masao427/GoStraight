@@ -52,19 +52,19 @@ public class EnemyController : MonoBehaviour {
                     // 敵車(Enemy)の右側に接触したので車体は左方向にドリフトする。
                     isDriftLeftway = false;  
                     isDriftRightway = true;
-                    Debug.Log("[Enemy]Hit to My Right Side!");
+//                    Debug.Log("[Enemy]Hit to My Right Side!");
                 }
                 else
                 {
                     // 敵車(Enemy)の左側に接触したの車体は右方向にドリフトする。
                     isDriftLeftway = true;
                     isDriftRightway = false; 
-                    Debug.Log("[Enemy]Hit to My Left Side!");
+//                    Debug.Log("[Enemy]Hit to My Left Side!");
                 }
 
                 // ドリフト開始
-                Debug.Log(contact.point);
-                Debug.Log("[Enemy]Start Drifting!!!");
+//                Debug.Log(contact.point);
+//                Debug.Log("[Enemy]Start Drifting!!!");
             }
         }
     }

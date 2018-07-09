@@ -24,7 +24,6 @@ public class EnemyDestroyer : MonoBehaviour {
         if (transform.position.z <= player.transform.position.z - delPosZ)
         {
             Destroy(gameObject);
-            Debug.Log("[Enemy]Deleted");
         }
     }
 
@@ -38,7 +37,6 @@ public class EnemyDestroyer : MonoBehaviour {
 
             // オブジェクトの消去
             Destroy(gameObject);
-            Debug.Log("[Enemy]Crashed");
         }
     }
 
