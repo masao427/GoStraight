@@ -14,6 +14,11 @@ public class PlayerController : MonoBehaviour {
     private GameObject stage2Button;        // Stage2へ遷移するボタン
     private GameObject stage3Button;        // Stage3へ遷移するボタン
     public GameObject explosion;            // 爆発のPrefab
+    public AudioSource bgmSource;           // BGM
+    public AudioSource goalSource;          // Goal時の曲
+    public AudioSource gameOverSource;      // GameOver時の曲
+    public AudioSource se_Explosion;        // 爆発音
+    public AudioSource se_Slip;             // スリップ音
 
     // 各種属性
     private float defaultPosY;              // PlayerのY軸(ゲームを通じて変更なし)
@@ -62,12 +67,6 @@ public class PlayerController : MonoBehaviour {
     private Text msgtxt;
     private Text scoretxt;
 
-    // ステージセレクトボタンの位置
-    private float st0PosX;
-    private float st1PosX;
-    private float st2PosX;
-    private float st3PosX;
-
     // Use this for initialization
     void Start() {
         // Rigidbodyコンポーネントを取得
@@ -79,31 +78,18 @@ public class PlayerController : MonoBehaviour {
         scoreDisplay = GameObject.Find("Score");
         scoretxt = scoreDisplay.GetComponent<Text>();
 
-        // ステージセレクトボタン
-        Vector3 workPos;
+        // ステージセレクトボタンを非表示
         stage1Button = GameObject.Find("GoStage1");
-        workPos = stage1Button.transform.position;
-        st1PosX = workPos.x;
-        workPos.x = st1PosX + 1000;
-        stage1Button.transform.position = workPos;
+        stage1Button.SetActive(false);
 
         stage2Button = GameObject.Find("GoStage2");
-        workPos = stage2Button.transform.position;
-        st2PosX = workPos.x;
-        workPos.x = st2PosX + 1000;
-        stage2Button.transform.position = workPos;
+        stage2Button.SetActive(false);
 
         stage3Button = GameObject.Find("GoStage3");
-        workPos = stage3Button.transform.position;
-        st3PosX = workPos.x;
-        workPos.x = st3PosX + 1000;
-        stage3Button.transform.position = workPos;
+        stage3Button.SetActive(false);
 
         stage0Button = GameObject.Find("GoTitle");
-        workPos = stage0Button.transform.position;
-        st0PosX = workPos.x;
-        workPos.x = st0PosX + 1000;
-        stage0Button.transform.position = workPos;
+        stage0Button.SetActive(false);
 
         // PlayerのY軸
         defaultPosY = transform.position.y;
@@ -160,12 +146,16 @@ public class PlayerController : MonoBehaviour {
 
                 // ゲームオーバー状態
                 isGameOver = true;
+                gameOverSource.Play();
             }
         }
 
         // ゲームオーバーになった
         if (isGameOver == true)
         {
+            // BGMを止める
+            bgmSource.Stop();
+
             // キー入力は無効
             if (((Input.GetKey(KeyCode.LeftArrow))  || (isLButtonDown))
              || ((Input.GetKey(KeyCode.RightArrow)) || (isRButtonDown))
@@ -175,22 +165,10 @@ public class PlayerController : MonoBehaviour {
             }
 
             // シーン選択ボタンを表示する
-            Vector3 tmp;
-            tmp = stage1Button.transform.position;
-            tmp.x = st1PosX;
-            stage1Button.transform.position = tmp;
-
-            tmp = stage2Button.transform.position;
-            tmp.x = st2PosX;
-            stage2Button.transform.position = tmp;
-
-            tmp = stage3Button.transform.position;
-            tmp.x = st3PosX;
-            stage3Button.transform.position = tmp;
-
-            tmp = stage0Button.transform.position;
-            tmp.x = st0PosX;
-            stage0Button.transform.position = tmp;
+            stage1Button.SetActive(true);
+            stage2Button.SetActive(true);
+            stage3Button.SetActive(true);
+            stage0Button.SetActive(true);
         }
 
         // ドリフト状態の時は強制的に左右どちらかにドリフトしている。
@@ -208,6 +186,7 @@ public class PlayerController : MonoBehaviour {
                 isDriftLeftway = false;
                 movePosX = 0;
                 transform.rotation = Quaternion.Euler(0, -180, 0);
+                se_Slip.Stop();
 
                 // スコア加算
                 scoreNum += 100;
@@ -255,6 +234,7 @@ public class PlayerController : MonoBehaviour {
                 isDriftRightway = false;
                 movePosX = 0;
                 transform.rotation = Quaternion.Euler(0, -180, 0);
+                se_Slip.Stop();
 
                 // スコア加算
                 scoreNum += 100;
@@ -345,6 +325,9 @@ public class PlayerController : MonoBehaviour {
 
                 // 全軸のRotationをFreeze
                 myRigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+
+                // スリップ音を止める
+                se_Slip.Stop();
             }
         }
 
@@ -422,6 +405,9 @@ public class PlayerController : MonoBehaviour {
         {
             isEnd = true;
             msgtxt.text = "Goal!";
+
+            // ゴールした時の音を鳴らす
+            goalSource.Play();
         }
     }
 
@@ -459,6 +445,13 @@ public class PlayerController : MonoBehaviour {
             }
 
             // 爆発エフェクト
+            if ((isEnd == false)
+            || (isGameOver == false))
+            {
+                // ゴールしたりGameOverになっていないときに音の制御を行う
+                se_Slip.Stop();
+                se_Explosion.Play();
+            }
             expCount = 0;
             Explosion();
 
@@ -498,6 +491,9 @@ public class PlayerController : MonoBehaviour {
 
                 // ドリフト開始
                 dftCount = 0;
+
+                // スリップ音を鳴らす
+                se_Slip.Play();
             }
         }
         

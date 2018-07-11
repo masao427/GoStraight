@@ -91,7 +91,6 @@ public class EnemyGenerator : MonoBehaviour {
 
         // アイテムを置くX座標のオフセットをランダムに設定
         int offsetX = Random.Range(-2, 2);
-//        int offsetX = -2;
         car.transform.position = new Vector3(posXRange * offsetX, car.transform.position.y, PosZ);
     }
 }
