@@ -14,7 +14,6 @@ public class SpeedMeterController : MonoBehaviour {
 
     // 各種属性
     private float goalPos;              // Goal地点
-    private float playerOffset = 240;   // Playerの初期位置のオフセット
     private float maxSpeed = 300.0f;    // 最高速設定
     private float spdnum = 0.0f;        // スピードの値
 

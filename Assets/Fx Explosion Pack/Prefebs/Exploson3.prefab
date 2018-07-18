@@ -43,6 +43,7 @@ GameObject:
   m_Component:
   - component: {fileID: 400008}
   - component: {fileID: 11400008}
+  - component: {fileID: 114190252597984878}
   m_Layer: 0
   m_Name: Exploson3
   m_TagString: Untagged
@@ -10458,3 +10459,14 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 100008}
   m_IsPrefabParent: 1
+--- !u!114 &114190252597984878
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c11d74800637e445adf62d8c3a676d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

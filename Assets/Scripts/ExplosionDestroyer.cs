@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ConeDestroyer : MonoBehaviour {
+public class ExplosionDestroyer : MonoBehaviour {
     // 各種オブジェクト
     private GameObject player;  // Playerオブジェクト取得
 
     // 各種属性
     private int delPosZ = 20;   // Playerの通過ポイント
 
-    // Use this for initialization
-    void Start() {
+	// Use this for initialization
+	void Start() {
         // Playerのオブジェクトを取得
         player = GameObject.Find("Player");
-	}
+    }
 	
 	// Update is called once per frame
 	void Update() {

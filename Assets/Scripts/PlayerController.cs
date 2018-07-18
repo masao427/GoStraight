@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour {
     private Rigidbody myRigidbody;          // Playerを移動させるコンポーネントを入れる
     private GameObject messageDisplay;      // 各種メッセージ表示
     private GameObject scoreDisplay;        // スコア表示
+    private GameObject comboDisplay;        // コンボ表示
     private GameObject stage0Button;        // Titleへ遷移するボタン
     private GameObject stage1Button;        // Stage1へ遷移するボタン
     private GameObject stage2Button;        // Stage2へ遷移するボタン
@@ -66,6 +67,9 @@ public class PlayerController : MonoBehaviour {
     // メッセージテキスト
     private Text msgtxt;
     private Text scoretxt;
+    private Text combotxt;
+    private bool isCombo;                   // コンボ表示の有無
+    private int comboCnt;                   // コンボカウント
 
     // Use this for initialization
     void Start() {
@@ -77,19 +81,29 @@ public class PlayerController : MonoBehaviour {
         msgtxt = messageDisplay.GetComponent<Text>();
         scoreDisplay = GameObject.Find("Score");
         scoretxt = scoreDisplay.GetComponent<Text>();
+        comboDisplay = GameObject.Find("Combo");
+        combotxt = comboDisplay.GetComponent<Text>();
+
+        // コンボ表示の有無
+        if (combotxt.IsActive() == true)
+        {
+            isCombo = true;
+        }
+        else
+        {
+            isCombo = false;
+        }
+        comboCnt = 0;
 
         // ステージセレクトボタンを非表示
-        stage1Button = GameObject.Find("GoStage1");
-        stage1Button.SetActive(false);
-
-        stage2Button = GameObject.Find("GoStage2");
-        stage2Button.SetActive(false);
-
-        stage3Button = GameObject.Find("GoStage3");
-        stage3Button.SetActive(false);
-
         stage0Button = GameObject.Find("GoTitle");
         stage0Button.SetActive(false);
+        stage1Button = GameObject.Find("GoStage1");
+        stage1Button.SetActive(false);
+        stage2Button = GameObject.Find("GoStage2");
+        stage2Button.SetActive(false);
+        stage3Button = GameObject.Find("GoStage3");
+        stage3Button.SetActive(false);
 
         // PlayerのY軸
         defaultPosY = transform.position.y;
@@ -136,6 +150,13 @@ public class PlayerController : MonoBehaviour {
 
                 // ミスの回数をカウント
                 missNum -= 1;
+
+                // コンボのカウントクリア
+                if (isCombo == true)
+                {
+                    comboCnt = 0;
+                    combotxt.text = comboCnt.ToString("D2") + " Combo";
+                }
             }
 
             // 残機が無くなったらゲームオーバー状態
@@ -179,8 +200,33 @@ public class PlayerController : MonoBehaviour {
             transform.rotation = Quaternion.Euler(0, -150, 0);
             myRigidbody.velocity = new Vector3(-driftForce, 0, movePosZ);
 
+            // カウンターを当てた場合
+            if ((Input.touchCount > 0)
+             && (Input.GetTouch(0).deltaPosition.x < 0))
+            {
+                isDriftLeftway = false;
+                movePosX = 0;
+                transform.rotation = Quaternion.Euler(0, -180, 0);
+                se_Slip.Stop();
+
+                // スコア加算
+                // コンボ表示のある時
+                if (isCombo == true)
+                {
+                    comboCnt++;
+                    scoreNum += comboCnt * 100;
+                    scoretxt.text = "Score " + scoreNum.ToString("D6");
+                    combotxt.text = comboCnt.ToString("D2") + " Combo";
+                }
+                // コンボ表示のない時
+                else
+                {
+                    scoreNum += 100;
+                    scoretxt.text = "Score " + scoreNum.ToString("D6");
+                }
+            }
             // 流れている方向にキーを入力すると復帰する。
-            if ((Input.GetKey(KeyCode.LeftArrow))
+ /*           if ((Input.GetKey(KeyCode.LeftArrow))
              || (isLButtonDown))
             {
                 isDriftLeftway = false;
@@ -196,10 +242,9 @@ public class PlayerController : MonoBehaviour {
                   || (isRButtonDown))
             {
                 // 制御できない(何もしない)
-            }
-
+            }*/
             // ドリフトからスピン状態へ遷移
-            if (dftCount < dftTimeOut)
+            else if (dftCount < dftTimeOut)
             {
                 // ドリフト中しばらくは滑る
                 dftCount++;
@@ -209,6 +254,13 @@ public class PlayerController : MonoBehaviour {
                 // ドリフト状態からスピン状態へ遷移
                 isSpin = true;
                 movePosX = driftForce;
+                
+                // コンボのカウントクリア
+                if (isCombo == true)
+                {
+                    comboCnt = 0;
+                    combotxt.text = comboCnt.ToString("D2") + " Combo";
+                }
 
                 // Y軸で回転できるようにする。
                 myRigidbody.constraints = RigidbodyConstraints.None;
@@ -222,8 +274,33 @@ public class PlayerController : MonoBehaviour {
             transform.rotation = Quaternion.Euler(0, -210, 0);
             myRigidbody.velocity = new Vector3(driftForce, 0, movePosZ);
 
+            // カウンターを当てた場合
+            if ((Input.touchCount > 0)
+             && (Input.GetTouch(0).deltaPosition.x > 0))
+            {
+                isDriftRightway = false;
+                movePosX = 0;
+                transform.rotation = Quaternion.Euler(0, -180, 0);
+                se_Slip.Stop();
+
+                // スコア加算
+                // コンボ表示のある時
+                if (isCombo == true)
+                {
+                    comboCnt++;
+                    scoreNum += comboCnt * 100;
+                    scoretxt.text = "Score " + scoreNum.ToString("D6");
+                    combotxt.text = comboCnt.ToString("D2") + " Combo";
+                }
+                // コンボ表示のない時
+                else
+                {
+                    scoreNum += 100;
+                    scoretxt.text = "Score " + scoreNum.ToString("D6");
+                }
+            }
             // 流れている方向にキーを入力すると復帰する。
-            if ((Input.GetKey(KeyCode.LeftArrow))
+/*            if ((Input.GetKey(KeyCode.LeftArrow))
              || (isLButtonDown))
             {
                 // 制御できない(何もしない)
@@ -239,10 +316,9 @@ public class PlayerController : MonoBehaviour {
                 // スコア加算
                 scoreNum += 100;
                 scoretxt.text = "Score " + scoreNum.ToString("D6");
-            }
-
+            }*/
             // ドリフトからスピン状態へ遷移
-            if (dftCount < dftTimeOut)
+            else if (dftCount < dftTimeOut)
             {
                 dftCount++;
             }
@@ -251,6 +327,13 @@ public class PlayerController : MonoBehaviour {
                 // ドリフト状態からスピン状態へ遷移
                 isSpin = true;
                 movePosX = driftForce;
+
+                // コンボのカウントクリア
+                if (isCombo == true)
+                {
+                    comboCnt = 0;
+                    combotxt.text = comboCnt.ToString("D2") + " Combo";
+                }
 
                 // Y軸で回転できるようにする。
                 // 一旦全軸の制限を解除してからX, Z軸をFreeze
@@ -273,13 +356,38 @@ public class PlayerController : MonoBehaviour {
                 myRigidbody.velocity = new Vector3(movePosX, 0, movePosZ);
                 transform.Rotate(0, spnNum, 0);
             }
-
+/*
             if (((Input.GetKey(KeyCode.LeftArrow))  || (isLButtonDown))
              || ((Input.GetKey(KeyCode.RightArrow)) || (isRButtonDown)))
             {
                 // 制御できない(何もしない)
             }
+*/
+            // スピン中アクセルオンの場合、Z軸とX軸の減少や緩やか
+            // つまり、スピンしているために滑っているが、やがて停止する。
+            if (Input.touchCount > 0)
+            {
+                if (movePosX > 0)
+                {
+                    movePosX -= 0.075f;
+                }
 
+                // スピンしているので、アクセルオンしていても緩やかに減速する。
+                movePosZ -= (reduceForce * 0.80f);
+            }
+            // スピン中アクセルオフの場合、Z軸とX軸の減少が早い。
+            // つまり、スピンして滑ってはいるがエンジンブレーキがかかってすぐに減速する。
+            else
+            {
+                if (movePosX > 0)
+                {
+                    movePosX -= 0.15f;
+                }
+
+                // エンジンブレーキがかかる
+                movePosZ -= reduceForce;
+            }
+/*
             // スピン中アクセルオンの場合、Z軸とX軸の減少や緩やか
             // つまり、スピンしているために滑っているが、やがて停止する。
             if ((Input.GetKey(KeyCode.UpArrow)) 
@@ -305,14 +413,14 @@ public class PlayerController : MonoBehaviour {
                 // エンジンブレーキがかかる
                 movePosZ -= reduceForce;
             }
-
+*/
             // 車速が完全に停止した
             if (movePosZ <= 0)
             {
                 // X軸の動きも停止する。
                 movePosX = 0;
 
-                // スピンが停止すれば通常停止状態
+                // スピンが停止したので通常停止状態へ遷移
                 isDriftLeftway = false;
                 isDriftRightway = false;
                 isSpin = false;
@@ -339,9 +447,35 @@ public class PlayerController : MonoBehaviour {
          && (isSpin == false)
          && (isStop == false))
         {
-            // 現在の速度を取得
+            // 現在の速度を取得(MaxSpeed制御のため)
             spdnum = myRigidbody.velocity.magnitude * 3;
 
+            // 画面をタッチしているとき
+            if (Input.touchCount > 0)
+            {
+                // Max Speed になるまで加速する。
+                if (spdnum < playerMaxSpeed)
+                {
+                    movePosZ += forwardForce;
+                }
+
+                // 画面にタッチしているときだけ左右に移動可能
+                movePosX = Input.GetTouch(0).deltaPosition.x;
+            }
+            // 画面をタッチしていないとき
+            else
+            {
+                // ブレーキをかける
+                if (movePosZ > 0)
+                {
+                    movePosZ -= reduceForce;
+                }
+                else
+                {
+                    movePosZ = 0;
+                }
+            }
+/*
             // Playerに前方向の力を加える
             // アクセルオン時
             if ((Input.GetKey(KeyCode.UpArrow))
@@ -385,14 +519,14 @@ public class PlayerController : MonoBehaviour {
                 // 左右の入力がないときはその場から動かない
                 movePosX = 0;
             }
-
+*/
             // Playerを移動させる。
             if (transform.position.y > defaultPosY)
             {
                 // 混戦したときに車体が浮き上がるバグ対策
-                Vector3 playerPos = transform.position;
-                playerPos.y = defaultPosY;
-                transform.position = playerPos;
+                Vector3 temp = transform.position;
+                temp.y = defaultPosY;
+                transform.position = temp;
             }
             myRigidbody.velocity = new Vector3(movePosX, 0, movePosZ);
         }
@@ -404,7 +538,7 @@ public class PlayerController : MonoBehaviour {
         if (other.gameObject.tag == "GoalTag")
         {
             isEnd = true;
-            msgtxt.text = "Goal!";
+            msgtxt.text = "Goal!!!";
 
             // ゴールした時の音を鳴らす
             goalSource.Play();
@@ -475,7 +609,6 @@ public class PlayerController : MonoBehaviour {
                 // ドリフトしているときは左右のどちらかに必ず流れているので、
                 // 反対方向の判定は必ずfalseにする。
                 // (カウンター当てる前に次の敵車に接触した場合を考慮)
-                Debug.Log(contact.point);
                 if (contact.point.x > 0)
                 {
                     // Playerの右側に接触したので車体は左方向にドリフトする。
@@ -549,8 +682,28 @@ public class PlayerController : MonoBehaviour {
     }
 
     // ステージセレクト
+    public void GoTitleStart()
+    {
+        // ボタンを押された時点で再生されている音を止める
+        goalSource.Stop();
+        gameOverSource.Stop();
+        se_Explosion.Stop();
+
+        // 現在読み込まれているSceneを取得
+        string sceneName = UnityEngine.SceneManagement.SceneManager.GetSceneAt(0).name;
+
+        // 別のステージに移る場合は今のステージをUnloadしてから次のシーンをロードする。
+        SceneManager.UnloadSceneAsync(sceneName);
+        SceneManager.LoadScene("Title");
+    }
+
     public void Stage1Start()
     {
+        // ボタンを押された時点で再生されている音を止める
+        goalSource.Stop();
+        gameOverSource.Stop();
+        se_Explosion.Stop();
+
         // 現在読み込まれているSceneを取得
         string sceneName = UnityEngine.SceneManagement.SceneManager.GetSceneAt(0).name;
         if (sceneName != "Stage1")
@@ -563,6 +716,11 @@ public class PlayerController : MonoBehaviour {
 
     public void Stage2Start()
     {
+        // ボタンを押された時点で再生されている音を止める
+        goalSource.Stop();
+        gameOverSource.Stop();
+        se_Explosion.Stop();
+
         // 現在読み込まれているSceneを取得
         string sceneName = UnityEngine.SceneManagement.SceneManager.GetSceneAt(0).name;
         if (sceneName != "Stage2")
@@ -575,6 +733,11 @@ public class PlayerController : MonoBehaviour {
 
     public void Stage3Start()
     {
+        // ボタンを押された時点で再生されている音を止める
+        goalSource.Stop();
+        gameOverSource.Stop();
+        se_Explosion.Stop();
+
         // 現在読み込まれているSceneを取得
         string sceneName = UnityEngine.SceneManagement.SceneManager.GetSceneAt(0).name;
         if (sceneName != "Stage3")
@@ -583,16 +746,6 @@ public class PlayerController : MonoBehaviour {
             SceneManager.UnloadSceneAsync(sceneName);
         }
         SceneManager.LoadScene("Stage3");
-    }
-
-    public void GoTitleStart()
-    {
-        // 現在読み込まれているSceneを取得
-        string sceneName = UnityEngine.SceneManagement.SceneManager.GetSceneAt(0).name;
-        
-        // 別のステージに移る場合は今のステージをUnloadしてから次のシーンをロードする。
-        SceneManager.UnloadSceneAsync(sceneName);
-        SceneManager.LoadScene("Title");
     }
 
     // 爆発エフェクト

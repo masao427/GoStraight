@@ -14,7 +14,7 @@ public class DistanceBarController : MonoBehaviour {
     // 各種属性
     private float distnum;              // 距離の表示
     private float goalPos;              // Goal地点
-    private float playerOffset = 240;   // Playerの初期位置のオフセット
+    private float playerOffset = 238;   // Playerの初期位置のオフセット
 
     // Use this for initialization
     void Start() {
