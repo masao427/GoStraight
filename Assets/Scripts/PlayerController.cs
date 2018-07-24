@@ -35,7 +35,7 @@ public class PlayerController : MonoBehaviour {
     private float movePosX = 0f;
 
     // 動きを減速させる係数(強制停止)
-    private float coefficient = 500.0f;
+    private float coefficient = 10.0f;
 
     // Playerの状態
     private bool isEnd = false;             // ゲーム終了の判定
@@ -57,6 +57,9 @@ public class PlayerController : MonoBehaviour {
     private bool isRButtonDown = false;     // 右ボタン押下の判定
     private bool isAButtonDown = false;     // アクセルボタン押下の判定
 
+    // Goalポジション
+    private float goalPosZ;                 
+    
     // スコア
     private int scoreNum = 0;               // スコア計算
     private int missNum = 2;                // ミスの回数
@@ -114,6 +117,9 @@ public class PlayerController : MonoBehaviour {
 
         // PlayerのY軸
         defaultPosY = transform.position.y;
+
+        // GoalのZ軸
+        goalPosZ = GameObject.Find("GoalPrefab").transform.position.z;
     }
 
     // Update is called once per frame
@@ -121,9 +127,6 @@ public class PlayerController : MonoBehaviour {
         // ゲーム終了ならPlayerの動きを減衰する
         if (isEnd == true)
         {
-            // X軸の動きを停止
-            movePosX = 0;
-
             // ドリフト中 or スピン中にゴールした場合
             if ((isDriftLeftway == true)
              || (isDriftRightway == true)
@@ -144,6 +147,7 @@ public class PlayerController : MonoBehaviour {
             }
 
             // ゲームオーバー状態
+            isEnd = false;
             isGameOver = true;
         }
 
@@ -164,13 +168,16 @@ public class PlayerController : MonoBehaviour {
                 isStop = false;
 
                 // ミスの回数をカウント
-                missNum -= 1;
+                if (isGameOver == false)
+                {
+                    missNum -= 1;
+                }
 
                 // コンボのカウントクリア
                 if (isCombo == true)
                 {
                     comboCnt = 0;
-                    combotxt.text = comboCnt.ToString("D2") + " Combo";
+                    combotxt.text = comboCnt.ToString("D3") + " Combo";
                 }
             }
 
@@ -210,6 +217,12 @@ public class PlayerController : MonoBehaviour {
             stage2Button.SetActive(true);
             stage3Button.SetActive(true);
             stage0Button.SetActive(true);
+
+            // Playerが画面外に出たら停止させる
+            if (transform.position.z > (goalPosZ + 50))
+            {
+                myRigidbody.velocity = Vector3.zero;
+            }
         }
 
         // ドリフト状態の時は強制的に左右どちらかにドリフトしている。
@@ -235,14 +248,14 @@ public class PlayerController : MonoBehaviour {
                 {
                     comboCnt++;
                     scoreNum += comboCnt * 100;
-                    scoretxt.text = "Score " + scoreNum.ToString("D6");
-                    combotxt.text = comboCnt.ToString("D2") + " Combo";
+                    scoretxt.text = "Score " + scoreNum.ToString("D7");
+                    combotxt.text = comboCnt.ToString("D3") + " Combo";
                 }
                 // コンボ表示のない時
                 else
                 {
                     scoreNum += 100;
-                    scoretxt.text = "Score " + scoreNum.ToString("D6");
+                    scoretxt.text = "Score " + scoreNum.ToString("D7");
                 }
             }
             // 流れている方向にキーを入力すると復帰する。
@@ -256,7 +269,7 @@ public class PlayerController : MonoBehaviour {
 
                 // スコア加算
                 scoreNum += 100;
-                scoretxt.text = "Score " + scoreNum.ToString("D6");
+                scoretxt.text = "Score " + scoreNum.ToString("D7");
             }
             else if ((Input.GetKey(KeyCode.RightArrow))
                   || (isRButtonDown))
@@ -279,7 +292,7 @@ public class PlayerController : MonoBehaviour {
                 if (isCombo == true)
                 {
                     comboCnt = 0;
-                    combotxt.text = comboCnt.ToString("D2") + " Combo";
+                    combotxt.text = comboCnt.ToString("D3") + " Combo";
                 }
 
                 // Y軸で回転できるようにする。
@@ -309,14 +322,14 @@ public class PlayerController : MonoBehaviour {
                 {
                     comboCnt++;
                     scoreNum += comboCnt * 100;
-                    scoretxt.text = "Score " + scoreNum.ToString("D6");
-                    combotxt.text = comboCnt.ToString("D2") + " Combo";
+                    scoretxt.text = "Score " + scoreNum.ToString("D7");
+                    combotxt.text = comboCnt.ToString("D3") + " Combo";
                 }
                 // コンボ表示のない時
                 else
                 {
                     scoreNum += 100;
-                    scoretxt.text = "Score " + scoreNum.ToString("D6");
+                    scoretxt.text = "Score " + scoreNum.ToString("D7");
                 }
             }
             // 流れている方向にキーを入力すると復帰する。
@@ -335,7 +348,7 @@ public class PlayerController : MonoBehaviour {
 
                 // スコア加算
                 scoreNum += 100;
-                scoretxt.text = "Score " + scoreNum.ToString("D6");
+                scoretxt.text = "Score " + scoreNum.ToString("D7");
             }*/
             // ドリフトからスピン状態へ遷移
             else if (dftCount < dftTimeOut)
@@ -352,7 +365,7 @@ public class PlayerController : MonoBehaviour {
                 if (isCombo == true)
                 {
                     comboCnt = 0;
-                    combotxt.text = comboCnt.ToString("D2") + " Combo";
+                    combotxt.text = comboCnt.ToString("D3") + " Combo";
                 }
 
                 // Y軸で回転できるようにする。
@@ -591,8 +604,7 @@ public class PlayerController : MonoBehaviour {
             }
 
             // 爆発エフェクト
-            if ((isEnd == false)
-            || (isGameOver == false))
+            if (isGameOver == false)
             {
                 // ゴールしたりGameOverになっていないときに音の制御を行う
                 se_Slip.Stop();
@@ -646,7 +658,7 @@ public class PlayerController : MonoBehaviour {
         if (collision.gameObject.tag == "ConeTag")
         {
             scoreNum += 10;
-            scoretxt.text = "Score " + scoreNum.ToString("D6");
+            scoretxt.text = "Score " + scoreNum.ToString("D7");
 
             // 障害物に当たるたびに速度が上がるバグ修正
             if (spdnum > playerMaxSpeed)

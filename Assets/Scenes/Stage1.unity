@@ -445,6 +445,16 @@ Prefab:
       propertyPath: m_RootOrder
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 114503448232273038, guid: 4862df6321e74df4eaebc3d0cabd7c1b,
+        type: 2}
+      propertyPath: m_Text
+      value: Score 0000000
+      objectReference: {fileID: 0}
+    - target: {fileID: 224998932030019346, guid: 4862df6321e74df4eaebc3d0cabd7c1b,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: -10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 4862df6321e74df4eaebc3d0cabd7c1b, type: 2}
   m_IsPrefabParent: 0
@@ -1384,7 +1394,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 00 Combo
+  m_Text: 000 Combo
 --- !u!222 &1235082669
 CanvasRenderer:
   m_ObjectHideFlags: 0
