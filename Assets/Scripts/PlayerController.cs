@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour {
     private Rigidbody myRigidbody;          // Playerを移動させるコンポーネントを入れる
     private GameObject messageDisplay;      // 各種メッセージ表示
     private GameObject scoreDisplay;        // スコア表示
+    private GameObject leftDisplay;         // 残機数表示
     private GameObject comboDisplay;        // コンボ表示
     private GameObject stage0Button;        // Titleへ遷移するボタン
     private GameObject stage1Button;        // Stage1へ遷移するボタン
@@ -30,7 +31,7 @@ public class PlayerController : MonoBehaviour {
     private float movePosZ = 0f;
 
     // 左右に移動するための力
-    private float turnForce = 10.0f;        // 左右に動く時のスピード
+//    private float turnForce = 10.0f;        // 左右に動く時のスピード
     private float movePosX = 0f;
 
     // 動きを減速させる係数(強制停止)
@@ -51,23 +52,24 @@ public class PlayerController : MonoBehaviour {
     private int expTimeOut = 100;           // 爆発している時間
     private int expCount = 0;               // 爆発中の時間カウント
 
-    // ボタン操作
+    // ボタン操作(削除予定)
     private bool isLButtonDown = false;     // 左ボタン押下の判定
     private bool isRButtonDown = false;     // 右ボタン押下の判定
     private bool isAButtonDown = false;     // アクセルボタン押下の判定
 
     // スコア
     private int scoreNum = 0;               // スコア計算
-    private int missNum = 3;                // ミスの回数
+    private int missNum = 2;                // ミスの回数
 
     // スピードの表示
     public float playerMaxSpeed;            // 最高速設定(ステージ毎に選択できる)
     private float spdnum = 0.0f;
 
     // メッセージテキスト
-    private Text msgtxt;
-    private Text scoretxt;
-    private Text combotxt;
+    private Text msgtxt;                    // メッセージテキスト表示
+    private Text scoretxt;                  // スコアテキスト表示
+    private Text lefttxt;                   // 残機数テキスト表示
+    private Text combotxt;                  // コンボ数テキスト表示
     private bool isCombo;                   // コンボ表示の有無
     private int comboCnt;                   // コンボカウント
 
@@ -76,11 +78,16 @@ public class PlayerController : MonoBehaviour {
         // Rigidbodyコンポーネントを取得
         myRigidbody = GetComponent<Rigidbody>();
 
-        // スコア、メッセージ表示用のオブジェクトを取得
+        // スコア、メッセージ、残機数表示用のオブジェクトを取得
         messageDisplay = GameObject.Find("Message");
         msgtxt = messageDisplay.GetComponent<Text>();
         scoreDisplay = GameObject.Find("Score");
         scoretxt = scoreDisplay.GetComponent<Text>();
+
+        leftDisplay = GameObject.Find("Left");
+        lefttxt = leftDisplay.GetComponent<Text>();
+        lefttxt.text = "LEFT = " + missNum;
+
         comboDisplay = GameObject.Find("Combo");
         combotxt = comboDisplay.GetComponent<Text>();
 
@@ -114,18 +121,26 @@ public class PlayerController : MonoBehaviour {
         // ゲーム終了ならPlayerの動きを減衰する
         if (isEnd == true)
         {
-            if (movePosZ > 0)
-            {
-                // 強制減速
-                movePosZ -= coefficient;
+            // X軸の動きを停止
+            movePosX = 0;
 
-                // Playerの左右の動きを固定
-                movePosX = 0;
-            }
-            else
+            // ドリフト中 or スピン中にゴールした場合
+            if ((isDriftLeftway == true)
+             || (isDriftRightway == true)
+             || (isSpin == true))
             {
-                // 速度0km/h
-                movePosZ = 0;
+                // 状態復帰
+                isDriftLeftway = false;
+                isDriftRightway = false;
+                isSpin = false;
+
+                // Playerの姿勢を元に戻す
+                myRigidbody.angularVelocity = Vector3.zero;         // スピン停止
+                transform.rotation = Quaternion.Euler(0, -180, 0);  // Playerの姿勢を初期化
+                myRigidbody.constraints = RigidbodyConstraints.FreezeRotation;  // 全軸のRotationをFreeze
+
+                // スリップ音を止める
+                se_Slip.Stop();
             }
 
             // ゲームオーバー状態
@@ -160,7 +175,7 @@ public class PlayerController : MonoBehaviour {
             }
 
             // 残機が無くなったらゲームオーバー状態
-            if (missNum == 0)
+            if (missNum == -1)
             {
                 // 画面にゲームオーバーと表示
                 msgtxt.text = "Game Over";
@@ -169,6 +184,11 @@ public class PlayerController : MonoBehaviour {
                 isGameOver = true;
                 gameOverSource.Play();
             }
+            else
+            {
+                // 残機の表示更新
+                lefttxt.text = "LEFT = " + missNum;
+            }
         }
 
         // ゲームオーバーになった
@@ -176,7 +196,7 @@ public class PlayerController : MonoBehaviour {
         {
             // BGMを止める
             bgmSource.Stop();
-
+/*
             // キー入力は無効
             if (((Input.GetKey(KeyCode.LeftArrow))  || (isLButtonDown))
              || ((Input.GetKey(KeyCode.RightArrow)) || (isRButtonDown))
@@ -184,7 +204,7 @@ public class PlayerController : MonoBehaviour {
             {
                 // 制御できない(何もしない)
             }
-
+*/
             // シーン選択ボタンを表示する
             stage1Button.SetActive(true);
             stage2Button.SetActive(true);
@@ -417,29 +437,25 @@ public class PlayerController : MonoBehaviour {
             // 車速が完全に停止した
             if (movePosZ <= 0)
             {
-                // X軸の動きも停止する。
+                // X軸の動きを停止
                 movePosX = 0;
 
-                // スピンが停止したので通常停止状態へ遷移
+                // 状態復帰
                 isDriftLeftway = false;
                 isDriftRightway = false;
                 isSpin = false;
 
-                // スピンを止める。
-                myRigidbody.angularVelocity = Vector3.zero;
-
                 // Playerの姿勢を元に戻す。
-                transform.rotation = Quaternion.Euler(0, -180, 0);
-
-                // 全軸のRotationをFreeze
-                myRigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+                myRigidbody.angularVelocity = Vector3.zero;         // スピン停止
+                transform.rotation = Quaternion.Euler(0, -180, 0);  // Playerの姿勢を初期化
+                myRigidbody.constraints = RigidbodyConstraints.FreezeRotation;  // 全軸のRotationをFreeze
 
                 // スリップ音を止める
                 se_Slip.Stop();
             }
         }
 
-        // 通常走行状態(ドリフト無し、スピン無し)
+        // 通常走行状態(ドリフト無し/スピン無し)
         if ((isEnd == false)
          && (isGameOver == false)
          && (isDriftLeftway == false) 
@@ -453,7 +469,7 @@ public class PlayerController : MonoBehaviour {
             // 画面をタッチしているとき
             if (Input.touchCount > 0)
             {
-                // Max Speed になるまで加速する。
+                // Max Speed になるまで加速
                 if (spdnum < playerMaxSpeed)
                 {
                     movePosZ += forwardForce;
@@ -565,17 +581,13 @@ public class PlayerController : MonoBehaviour {
             // 回転を止める
             if (isSpin == true)
             {
-                // 回転を止める。
-                myRigidbody.angularVelocity = new Vector3(0, 0, 0);
-                
-                // Playerの姿勢を元に戻す。
-                transform.rotation = Quaternion.Euler(0, -180, 0);
-
-                // 全軸のRotationをFreeze
-                myRigidbody.constraints = RigidbodyConstraints.FreezeRotation;
-
                 // スピン状態の解除
                 isSpin = false;
+
+                // Playerの姿勢を元に戻す。
+                myRigidbody.angularVelocity = Vector3.zero;         // スピン停止
+                transform.rotation = Quaternion.Euler(0, -180, 0);  // Playerの姿勢を初期化
+                myRigidbody.constraints = RigidbodyConstraints.FreezeRotation;  // 全軸のRotationをFreeze
             }
 
             // 爆発エフェクト
